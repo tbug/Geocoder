@@ -31,8 +31,8 @@ class IpInfoDb extends AbstractProvider implements Provider
     private $apiKey;
 
     /**
-     * @param HttpAdapterInterface $adapter An HTTP adapter.
-     * @param string               $apiKey  An API key.
+     * @param HttpAdapterInterface $adapter An HTTP adapter
+     * @param string               $apiKey  An API key
      */
     public function __construct(HttpAdapterInterface $adapter, $apiKey)
     {
@@ -51,7 +51,7 @@ class IpInfoDb extends AbstractProvider implements Provider
         }
 
         if (!filter_var($address, FILTER_VALIDATE_IP)) {
-            throw new UnsupportedOperation('The IpInfoDb does not support Street addresses.');
+            throw new UnsupportedOperation('The IpInfoDb does not support street addresses, only IPv4 addresses.');
         }
 
         // This API does not support IPv6
@@ -84,11 +84,6 @@ class IpInfoDb extends AbstractProvider implements Provider
         return 'ip_info_db';
     }
 
-    /**
-     * @param string $query
-     *
-     * @return array
-     */
     private function executeQuery($query)
     {
         $content = (string) $this->getAdapter()->get($query)->getBody();
@@ -108,15 +103,17 @@ class IpInfoDb extends AbstractProvider implements Provider
             $timezone = timezone_name_from_abbr("", (int) substr($data['timeZone'], 0, strpos($data['timeZone'], ':')) * 3600, 0);
         }
 
-        return array(array_merge($this->getDefaults(), array(
-            'latitude'    => isset($data['latitude']) ? $data['latitude'] : null,
-            'longitude'   => isset($data['longitude']) ? $data['longitude'] : null,
-            'locality'    => isset($data['cityName']) ? $data['cityName'] : null,
-            'postalCode'  => isset($data['zipCode']) ? $data['zipCode'] : null,
-            'region'      => isset($data['regionName']) ? $data['regionName'] : null,
-            'country'     => isset($data['countryName']) ? $data['countryName'] : null,
-            'countryCode' => isset($data['countryName']) ? $data['countryCode'] : null,
-            'timezone'    => $timezone,
-        )));
+        return $this->returnResults([
+            array_merge($this->getDefaults(), array(
+                'latitude'    => isset($data['latitude']) ? $data['latitude'] : null,
+                'longitude'   => isset($data['longitude']) ? $data['longitude'] : null,
+                'locality'    => isset($data['cityName']) ? $data['cityName'] : null,
+                'postalCode'  => isset($data['zipCode']) ? $data['zipCode'] : null,
+                'region'      => isset($data['regionName']) ? $data['regionName'] : null,
+                'country'     => isset($data['countryName']) ? $data['countryName'] : null,
+                'countryCode' => isset($data['countryName']) ? $data['countryCode'] : null,
+                'timezone'    => $timezone,
+            ))
+            ]);
     }
 }

@@ -94,7 +94,7 @@ class Yandex extends AbstractProvider implements LocaleAwareProvider
             $query = sprintf('%s&lang=%s', $query, str_replace('_', '-', $this->getLocale()));
         }
 
-        $query = sprintf('%s&results=%d', $query, $this->getMaxResults());
+        $query = sprintf('%s&results=%d', $query, $this->getLimit());
 
         $content = (string) $this->getAdapter()->get($query)->getBody();
         $json    = (array) json_decode($content, true);

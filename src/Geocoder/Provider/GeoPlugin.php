@@ -29,7 +29,7 @@ class GeoPlugin extends AbstractProvider implements Provider
     public function geocode($address)
     {
         if (!filter_var($address, FILTER_VALIDATE_IP)) {
-            throw new UnsupportedOperation('The GeoPlugin does not support street addresses.');
+            throw new UnsupportedOperation('The GeoPlugin provider does not support street addresses, only IP addresses.');
         }
 
         if (in_array($address, array('127.0.0.1', '::1'))) {
@@ -46,7 +46,7 @@ class GeoPlugin extends AbstractProvider implements Provider
      */
     public function reverse($latitude, $longitude)
     {
-        throw new UnsupportedOperation('The GeoPlugin is not able to do reverse geocoding.');
+        throw new UnsupportedOperation('The GeoPlugin provider is not able to do reverse geocoding.');
     }
 
     /**
@@ -67,29 +67,31 @@ class GeoPlugin extends AbstractProvider implements Provider
         $content = (string) $this->getAdapter()->get($query)->getBody();
 
         if (empty($content)) {
-            throw new NoResult(sprintf('Could not execute query %s', $query));
+            throw new NoResult(sprintf('Could not execute query "%s".', $query));
         }
 
         $json = json_decode($content, true);
 
         if (!is_array($json) || !count($json)) {
-            throw new NoResult(sprintf('Could not execute query %s', $query));
+            throw new NoResult(sprintf('Could not execute query "%s".', $query));
         }
 
         if (!array_key_exists('geoplugin_status', $json) || (200 !== $json['geoplugin_status'] && 206 !== $json['geoplugin_status'])) {
-            throw new NoResult(sprintf('Could not execute query %s', $query));
+            throw new NoResult(sprintf('Could not execute query "%s".', $query));
         }
 
         $data = array_filter($json);
 
-        return array(array_merge($this->getDefaults(), array(
-            'locality'    => isset($data['geoplugin_city']) ? $data['geoplugin_city'] : null,
-            'country'     => isset($data['geoplugin_countryName']) ? $data['geoplugin_countryName'] : null,
-            'countryCode' => isset($data['geoplugin_countryCode']) ? $data['geoplugin_countryCode'] : null,
-            'region'      => isset($data['geoplugin_regionName']) ? $data['geoplugin_regionName'] : null,
-            'regionCode'  => isset($data['geoplugin_regionCode']) ? $data['geoplugin_regionCode'] : null,
-            'latitude'    => isset($data['geoplugin_latitude']) ? $data['geoplugin_latitude'] : null,
-            'longitude'   => isset($data['geoplugin_longitude']) ? $data['geoplugin_longitude'] : null,
-        )));
+        return $this->returnResults([
+            array_merge($this->getDefaults(), [
+                'locality'    => isset($data['geoplugin_city']) ? $data['geoplugin_city'] : null,
+                'country'     => isset($data['geoplugin_countryName']) ? $data['geoplugin_countryName'] : null,
+                'countryCode' => isset($data['geoplugin_countryCode']) ? $data['geoplugin_countryCode'] : null,
+                'region'      => isset($data['geoplugin_regionName']) ? $data['geoplugin_regionName'] : null,
+                'regionCode'  => isset($data['geoplugin_regionCode']) ? $data['geoplugin_regionCode'] : null,
+                'latitude'    => isset($data['geoplugin_latitude']) ? $data['geoplugin_latitude'] : null,
+                'longitude'   => isset($data['geoplugin_longitude']) ? $data['geoplugin_longitude'] : null,
+            ])
+        ]);
     }
 }

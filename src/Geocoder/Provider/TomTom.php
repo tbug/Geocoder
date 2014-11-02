@@ -61,7 +61,7 @@ class TomTom extends AbstractProvider implements LocaleAwareProvider
             throw new UnsupportedOperation('The TomTom does not support IP addresses.');
         }
 
-        $query = sprintf(self::GEOCODE_ENDPOINT_URL, $this->apiKey, rawurlencode($address), $this->getMaxResults());
+        $query = sprintf(self::GEOCODE_ENDPOINT_URL, $this->apiKey, rawurlencode($address), $this->getLimit());
 
         return $this->executeQuery($query);
     }

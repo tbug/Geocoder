@@ -47,7 +47,7 @@ class Nominatim extends AbstractProvider implements LocaleAwareProvider
             return array($this->getLocalhostDefaults());
         }
 
-        $query   = sprintf($this->getGeocodeEndpointUrl(), urlencode($address), $this->getMaxResults());
+        $query   = sprintf($this->getGeocodeEndpointUrl(), urlencode($address), $this->getLimit());
         $content = $this->executeQuery($query);
 
         if (empty($content)) {

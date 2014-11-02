@@ -2,16 +2,16 @@
 
 namespace Geocoder\Tests;
 
+use Geocoder\ProviderAggregator;
 use Geocoder\Model\Address;
 use Geocoder\Model\AddressFactory;
-use Geocoder\ProviderBasedGeocoder;
 use Geocoder\Provider\LocaleAwareProvider;
 use Geocoder\Provider\Provider;
 
 /**
  * @author William Durand <william.durand1@gmail.com>
  */
-class ProviderBasedGeocoderTest extends TestCase
+class ProviderAggregatorTest extends TestCase
 {
     protected $geocoder;
 
@@ -145,28 +145,9 @@ class ProviderBasedGeocoderTest extends TestCase
         $this->assertEquals(0, $this->geocoder->getProvider('test2')->geocodeCount);
     }
 
-    public function testSetMaxResults()
-    {
-        $this->geocoder->limit(3);
-        $this->assertSame(3, $this->geocoder->getMaxResults());
-    }
-
-    public function testSetLocale()
-    {
-        $provider1 = new MockProvider('test1');
-        $provider2 = new MockLocaleAwareProvider('test2');
-
-        $this->geocoder->registerProviders([$provider1, $provider2]);
-        $this->geocoder->setLocale('en');
-        $this->assertEquals('en', $provider2->getLocale());
-
-        $this->geocoder->setLocale(null);
-        $this->assertNull($provider2->getLocale());
-    }
-
     public function testDefaultMaxResults()
     {
-        $this->assertSame(ProviderBasedGeocoder::MAX_RESULTS, $this->geocoder->getMaxResults());
+        $this->assertSame(Geocoder::MAX_RESULTS, $this->geocoder->getLimit());
     }
 
     private function getAddressMock()
@@ -184,14 +165,14 @@ class MockProvider implements Provider
         $this->name = $name;
     }
 
-    public function getGeocodedData($address)
+    public function geocode($address)
     {
-        return array();
+        return $this->returnResult(array());
     }
 
-    public function getReversedData(array $coordinates)
+    public function reverse($latitude, $longitude)
     {
-        return array();
+        return $this->returnResult(array());
     }
 
     public function getName()
@@ -199,9 +180,17 @@ class MockProvider implements Provider
         return $this->name;
     }
 
-    public function setMaxResults($maxResults)
+    public function getLimit()
+    {
+    }
+
+    public function limit($limit)
     {
         return $this;
+    }
+
+    public function returnResult(array $data = array())
+    {
     }
 }
 
@@ -213,23 +202,16 @@ class MockLocaleAwareProvider extends MockProvider implements LocaleAwareProvide
     {
         return $this->locale;
     }
-
-    public function setLocale($locale = null)
-    {
-        $this->locale = $locale;
-
-        return $this;
-    }
 }
 
 class MockProviderWithData extends MockProvider
 {
-    public function getGeocodedData($address)
+    public function geocode($address)
     {
-        return array(
+        return $this->returnResult(array(
             'latitude' => 123,
             'longitude' => 456
-        );
+        ));
     }
 }
 
@@ -237,13 +219,15 @@ class MockProviderWithRequestCount extends MockProvider
 {
     public $geocodeCount = 0;
 
-    public function getGeocodedData($address)
+    public function geocode($address)
     {
         $this->geocodeCount++;
+
+        return parent::geocode($address);
     }
 }
 
-class TestableGeocoder extends ProviderBasedGeocoder
+class TestableGeocoder extends ProviderAggregator
 {
     public $countCallGetProvider = 0;
 
@@ -252,10 +236,5 @@ class TestableGeocoder extends ProviderBasedGeocoder
         $this->countCallGetProvider++;
 
         return parent::getProvider();
-    }
-
-    public function returnResult(array $data = array())
-    {
-        return parent::returnResult($data);
     }
 }

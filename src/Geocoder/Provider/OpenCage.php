@@ -63,7 +63,7 @@ class OpenCage extends AbstractProvider implements Provider
             throw new InvalidCredentials('No API Key provided.');
         }
 
-        $query = sprintf(self::GEOCODE_ENDPOINT_URL, $this->scheme, $this->apiKey, urlencode($address), $this->getMaxResults() );
+        $query = sprintf(self::GEOCODE_ENDPOINT_URL, $this->scheme, $this->apiKey, urlencode($address), $this->getLimit() );
 
         return $this->executeQuery($query);
     }
