@@ -104,6 +104,7 @@ class GeoIP2ProviderTest extends TestCase
                     'country' => 'Germany',
                     'countryCode' => 'DE',
                     'timezone' => null,
+                    'neighborhood' => null
                 )
             ),
             'Response with all data null' => array(
@@ -125,6 +126,7 @@ class GeoIP2ProviderTest extends TestCase
                     'country' => null,
                     'countryCode' => null,
                     'timezone' => null,
+                    'neighborhood' => null
                 )
             )
         );
