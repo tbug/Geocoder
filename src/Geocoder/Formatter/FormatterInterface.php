@@ -39,6 +39,8 @@ interface FormatterInterface
 
     const TIMEZONE      = '%T';
 
+    const NEIGHBORHOOD  = '%N';
+
     /**
      * Format a ResultInterface object using a given format string.
      *

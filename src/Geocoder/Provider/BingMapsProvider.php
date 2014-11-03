@@ -36,15 +36,22 @@ class BingMapsProvider extends AbstractProvider implements LocaleAwareProviderIn
     private $apiKey = null;
 
     /**
+     * @var array
+     */
+    protected $options = array();
+
+    /**
      * @param HttpAdapterInterface $adapter An HTTP adapter.
      * @param string               $apiKey  An API key.
      * @param string               $locale  A locale (optional).
+     * @param array                $options Additional search options
      */
-    public function __construct(HttpAdapterInterface $adapter, $apiKey, $locale = null)
+    public function __construct(HttpAdapterInterface $adapter, $apiKey, $locale = null, $options = array())
     {
         parent::__construct($adapter, $locale);
 
         $this->apiKey = $apiKey;
+        $this->options = array_replace($this->options, $options);
     }
 
     /**
@@ -99,6 +106,10 @@ class BingMapsProvider extends AbstractProvider implements LocaleAwareProviderIn
             $query = sprintf('%s&culture=%s', $query, str_replace('_', '-', $this->getLocale()));
         }
 
+        if (count($this->options)) {
+          $query .= '&' . http_build_query($this->options);
+        }
+
         $content = $this->getAdapter()->getContent($query);
 
         if (null === $content) {
@@ -135,6 +146,7 @@ class BingMapsProvider extends AbstractProvider implements LocaleAwareProviderIn
             $county       = property_exists($item->address, 'adminDistrict2') ? (string) $item->address->adminDistrict2 : '';
             $region       = property_exists($item->address, 'adminDistrict') ? (string) $item->address->adminDistrict: '';
             $country      = property_exists($item->address, 'countryRegion') ? (string) $item->address->countryRegion: '';
+            $neighborhood = property_exists($item->address, 'neighborhood') ? (string) $item->address->neighborhood: '';
 
             $results[] = array_merge($this->getDefaults(), array(
                 'latitude'     => $coordinates[0],
@@ -147,6 +159,7 @@ class BingMapsProvider extends AbstractProvider implements LocaleAwareProviderIn
                 'county'       => empty($county) ? null : $county,
                 'region'       => empty($region) ? null : $region,
                 'country'      => empty($country) ? null : $country,
+                'neighborhood' => empty($neighborhood) ? null : $neighborhood
             ));
         }
 
