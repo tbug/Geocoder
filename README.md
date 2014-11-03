@@ -598,6 +598,8 @@ Here is the mapping:
 
 * Street Number: `%n`
 
+* Neighborhood: `%N`
+
 * Street Name: `%S`
 
 * City: `%L`
