@@ -91,6 +91,11 @@ class Geocoded extends AbstractResult implements ResultInterface
     protected $timezone = null;
 
     /**
+     * @var string
+     */
+    protected $neighborhood = null;
+
+    /**
      * {@inheritDoc}
      */
     public function getCoordinates()
@@ -221,6 +226,14 @@ class Geocoded extends AbstractResult implements ResultInterface
     /**
      * {@inheritDoc}
      */
+    public function getNeighborhood()
+    {
+      return $this->neighborhood;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function fromArray(array $data = array())
     {
         if (isset($data['latitude'])) {
@@ -287,6 +300,10 @@ class Geocoded extends AbstractResult implements ResultInterface
         if (isset($data['timezone'])) {
             $this->timezone = (string) $data['timezone'];
         }
+
+        if (isset($data['neighborhood'])) {
+            $this->neighborhood = (string) $data['neighborhood'];
+        }
     }
 
     /**
@@ -310,6 +327,7 @@ class Geocoded extends AbstractResult implements ResultInterface
             'country'       => $this->country,
             'countryCode'   => $this->countryCode,
             'timezone'      => $this->timezone,
+            'neighborhood'  => $this->neighborhood,
         );
     }
 }

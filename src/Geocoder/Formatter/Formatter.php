@@ -48,6 +48,7 @@ class Formatter implements FormatterInterface
             FormatterInterface::COUNTRY         => $this->result->getCountry(),
             FormatterInterface::COUNTRY_CODE    => $this->result->getCountryCode(),
             FormatterInterface::TIMEZONE        => $this->result->getTimezone(),
+            FormatterInterface::NEIGHBORHOOD    => $this->result->getNeighbourhood(),
         ));
     }
 }
