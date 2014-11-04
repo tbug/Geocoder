@@ -22,7 +22,7 @@
         "geoip2/geoip2": "~0.6"
     },
     "replaces": {
-        "willdurand/geocoder": "~2.4"
+        "willdurand/geocoder": "2.4"
     },
     "suggest": {
         "kriswallsmith/buzz": "Enabling Buzz allows you to use the BuzzHttpAdapter.",
