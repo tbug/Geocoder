@@ -5,6 +5,7 @@
     "keywords": ["geocoder", "geocoding", "abstraction", "geoip"],
     "homepage": "http://geocoder-php.org",
     "license": "MIT",
+    "minimum-stability": "dev",
     "authors": [
         {
             "name": "William Durand",
