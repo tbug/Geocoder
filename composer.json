@@ -1,6 +1,5 @@
 {
     "name": "ankr/geocoder",
-    "version": "2.4.888",
     "type": "library",
     "description": "The almost missing Geocoder PHP 5.3 library.",
     "keywords": ["geocoder", "geocoding", "abstraction", "geoip"],
