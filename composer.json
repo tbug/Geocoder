@@ -21,9 +21,9 @@
         "geoip/geoip": "~1.13",
         "geoip2/geoip2": "~0.6"
     },
-    "replaces": [
+    "replaces": {
         "willdurand/geocoder": "self.version"
-    ],
+    },
     "suggest": {
         "kriswallsmith/buzz": "Enabling Buzz allows you to use the BuzzHttpAdapter.",
         "ext-curl": "Enabling the curl extension allows you to use the CurlHttpAdapter.",
