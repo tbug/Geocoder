@@ -21,7 +21,7 @@
         "geoip/geoip": "~1.13",
         "geoip2/geoip2": "~0.6"
     },
-    "replaces": {
+    "replace": {
         "willdurand/geocoder": "2.4"
     },
     "suggest": {
