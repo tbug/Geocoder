@@ -34,8 +34,8 @@ class MapBoxProvider extends AbstractProvider implements ProviderInterface
 		 */
 		public function __construct(HttpAdapterInterface $adapter, $apiKey, $locale = null)
 		{
-				parent::__construct($adapter, $locale);
-				$this->apiKey = $apiKey;
+			parent::__construct($adapter, $locale);
+			$this->apiKey = $apiKey;
 		}
 
 		/**
@@ -43,13 +43,13 @@ class MapBoxProvider extends AbstractProvider implements ProviderInterface
 		 */
 		public function getGeocodedData($address)
 		{
-				if (!$this->apiKey) {
-						throw new InvalidCredentialsException('No API Key provided.');
-				}
+			if (!$this->apiKey) {
+				throw new InvalidCredentialsException('No API Key provided.');
+			}
 
-				$query = sprintf(self::GEOCODE_ENDPOINT_URL, urlencode($address), $this->apiKey);
+			$query = sprintf(self::GEOCODE_ENDPOINT_URL, urlencode($address), $this->apiKey);
 
-				return $this->executeQuery($query);
+			return $this->executeQuery($query);
 		}
 
 		/**
@@ -65,7 +65,7 @@ class MapBoxProvider extends AbstractProvider implements ProviderInterface
 		 */
 		public function getName()
 		{
-				return 'map_box';
+			return 'map_box';
 		}
 
 		/**
@@ -75,36 +75,36 @@ class MapBoxProvider extends AbstractProvider implements ProviderInterface
 		 */
 		protected function executeQuery($query)
 		{
-				$content = $this->getAdapter()->getContent($query);
+			$content = $this->getAdapter()->getContent($query);
 
-				if (!$content) {
-						throw new NoResultException(sprintf('Could not execute query: %s', $query));
+			if (!$content) {
+				throw new NoResultException(sprintf('Could not execute query: %s', $query));
+			}
+
+			$json = json_decode($content, true);
+
+			if (empty($json['features'])) {
+				throw new NoResultException(sprintf('Could not find results for given query: %s', $query));
+			}
+
+			$results = [];
+
+			foreach ($json['features'] as $location) {
+				if ($location['relevance'] < .75) {
+					continue;
 				}
 
-				$json = json_decode($content, true);
+				$results = array_merge($this->getDefaults(), [
+					'latitude' => $location['center'][1],
+					'longitude' => $location['center'][0],
+					'city' => $location['text']
+				]);
+			}
 
-				if (empty($json['features'])) {
-						throw new NoResultException(sprintf('Could not find results for given query: %s', $query));
-				}
+			if (empty($results)) {
+				throw new NoResultException(sprintf('Could not find results for given query: %s', $query));
+			}
 
-				$results = [];
-
-				foreach ($json['features'] as $location) {
-					if ($location['relevance'] < .75) {
-						continue;
-					}
-
-					$results = array_merge($this->getDefaults(), [
-						'latitude' => $location['center'][1],
-						'longitude' => $location['center'][0],
-						'city' => $location['text']
-					]);
-				}
-
-				if (empty($results)) {
-						throw new NoResultException(sprintf('Could not find results for given query: %s', $query));
-				}
-
-				return $results;
+			return $results;
 		}
 }
