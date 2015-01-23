@@ -304,10 +304,6 @@ class Geocoded extends AbstractResult implements ResultInterface
         if (isset($data['neighborhood'])) {
             $this->neighborhood = (string) $data['neighborhood'];
         }
-
-        if (isset($data['__provider_name'])) {
-            $this->__provider_name = (string) $data['__provider_name'];
-        }
     }
 
     /**
@@ -331,8 +327,7 @@ class Geocoded extends AbstractResult implements ResultInterface
             'country'       => $this->country,
             'countryCode'   => $this->countryCode,
             'timezone'      => $this->timezone,
-            'neighborhood'  => $this->neighborhood,
-            '__provider_name' => $this->__provider_name
+            'neighborhood'  => $this->neighborhood
         );
     }
 }

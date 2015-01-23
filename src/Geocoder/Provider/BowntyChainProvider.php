@@ -2,6 +2,7 @@
 
 namespace Geocoder\Provider;
 
+use DataDogStatsD;
 use Geocoder\Exception\InvalidCredentialsException;
 use Geocoder\Exception\ChainNoResultException;
 
@@ -17,7 +18,7 @@ class BowntyChainProvider implements ProviderInterface {
     /**
      * @var ProviderInterface[]
      */
-    private $providers = array();
+    protected $providers = array();
 
     /**
      * Constructor
@@ -46,16 +47,21 @@ class BowntyChainProvider implements ProviderInterface {
     {
         $exceptions = array();
         foreach ($this->providers as $provider) {
+            $timer = microtime(true);
+            $match = false;
             try {
-                $results = $provider->getGeocodedData($address);
-                foreach ($results as &$result) {
-                    $result['__provider_name'] = $provider->getName();
+                $result = $provider->getGeocodedData($address);
+                if ($result) {
+                    $match = true;
                 }
-                return $results;
+                return $result;
             } catch (InvalidCredentialsException $e) {
                 throw $e;
             } catch (\Exception $e) {
                 $exceptions[] = $e;
+            } finally {
+                $took = microtime(true) - $timer;
+                DataDogStatsD::increment('geo.lookup', 1, ['provider' => $provider->getName(), 'type' => 'redirect', 'time' => $took, 'success' => $match]);
             }
         }
         throw new ChainNoResultException(sprintf('No provider could provide the address "%s"', $address), $exceptions);
