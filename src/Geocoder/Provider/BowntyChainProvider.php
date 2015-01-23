@@ -48,11 +48,11 @@ class BowntyChainProvider implements ProviderInterface {
         $exceptions = array();
         foreach ($this->providers as $provider) {
             $timer = microtime(true);
-            $match = false;
+            $success = false;
             try {
                 $result = $provider->getGeocodedData($address);
                 if ($result) {
-                    $match = true;
+                    $success = true;
                 }
                 return $result;
             } catch (InvalidCredentialsException $e) {
@@ -60,8 +60,9 @@ class BowntyChainProvider implements ProviderInterface {
             } catch (\Exception $e) {
                 $exceptions[] = $e;
             } finally {
-                $took = microtime(true) - $timer;
-                DataDogStatsD::increment('geo.lookup', 1, ['provider' => $provider->getName(), 'type' => 'redirect', 'time' => $took, 'success' => $match]);
+                $tags = ['provider' => $provider->getName(), 'type' => 'redirect', 'success' => $success]:
+                DataDogStatsD::timing('geo.lookup', (microtime(true) - $timer), 1, $tags);
+                DataDogStatsD::increment('geo.lookup', 1, $tags);
             }
         }
         throw new ChainNoResultException(sprintf('No provider could provide the address "%s"', $address), $exceptions);
