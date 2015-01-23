@@ -228,7 +228,7 @@ class Geocoded extends AbstractResult implements ResultInterface
      */
     public function getNeighborhood()
     {
-      return $this->neighborhood;
+        return $this->neighborhood;
     }
 
     /**
@@ -304,6 +304,10 @@ class Geocoded extends AbstractResult implements ResultInterface
         if (isset($data['neighborhood'])) {
             $this->neighborhood = (string) $data['neighborhood'];
         }
+
+        if (isset($data['__provider_name'])) {
+            $this->__provider_name = (string) $data['__provider_name'];
+        }
     }
 
     /**
@@ -328,6 +332,7 @@ class Geocoded extends AbstractResult implements ResultInterface
             'countryCode'   => $this->countryCode,
             'timezone'      => $this->timezone,
             'neighborhood'  => $this->neighborhood,
+            '__provider_name' => $this->__provider_name
         );
     }
 }

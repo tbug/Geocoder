@@ -95,7 +95,7 @@ class MapBoxProvider extends AbstractProvider implements ProviderInterface
 				continue;
 			}
 
-			$results = array_merge($this->getDefaults(), [
+			$results[] = array_merge($this->getDefaults(), [
 				'latitude' => $location['center'][1],
 				'longitude' => $location['center'][0],
 				'city' => $location['text']
