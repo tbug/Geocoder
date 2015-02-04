@@ -60,7 +60,7 @@ class BowntyChainProvider implements ProviderInterface {
             } catch (\Exception $e) {
                 $exceptions[] = $e;
             } finally {
-                $tags = ['provider' => $provider->getName(), 'type' => 'redirect', 'success' => $success]:
+                $tags = ['provider' => $provider->getName(), 'type' => 'redirect', 'success' => $success];
                 DataDogStatsD::timing('geo.lookup', (microtime(true) - $timer), 1, $tags);
                 DataDogStatsD::increment('geo.lookup', 1, $tags);
             }
