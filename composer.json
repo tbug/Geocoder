@@ -15,6 +15,9 @@
     "require": {
         "php": ">=5.3.0"
     },
+    "provide": {
+        "willdurand/geocoder" : "dev-bownty"  
+    },
     "require-dev": {
         "kriswallsmith/buzz": "@stable",
         "guzzle/guzzle": "@stable",
